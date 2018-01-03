@@ -8,7 +8,7 @@ const app = express();
 app.use(express.static(__dirname + '/public'));
 const server = http.createServer(app);
 server.listen(3000);
-var io = require('socket.io')(server);
+const io = require('socket.io')(server);
 io.on('connection', function (socket) {
     let client1;
     let client2;
@@ -18,7 +18,9 @@ io.on('connection', function (socket) {
     socket.on('userConnect', function (message) {
         clients++;
         if (clients === 2) {
+            //get to the game page
             io.sockets.emit('startGame', message);
+            //start moving the ball from a client
             socket.emit('startBall', message);
         }
         else if (clients > 2) {

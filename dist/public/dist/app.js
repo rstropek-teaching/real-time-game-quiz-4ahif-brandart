@@ -94,19 +94,19 @@ $(function () {
     //Post function for my couchDB
     function doPost(object, searchUrl) {
         return __awaiter(this, void 0, void 0, function* () {
-            let returnData;
-            $.ajax({
-                type: "POST",
-                url: searchUrl,
-                contentType: "application/JSON",
-                data: JSON.stringify(object),
-                dataType: "json",
-                async: false,
-                success: yield function (data) {
-                    returnData = data;
-                }
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    type: "POST",
+                    url: searchUrl,
+                    contentType: "application/JSON",
+                    data: JSON.stringify(object),
+                    dataType: "json",
+                    async: false,
+                    success: function (data) {
+                        resolve(data);
+                    }
+                });
             });
-            return returnData;
         });
     }
     //moving the enemybar, reacting on server

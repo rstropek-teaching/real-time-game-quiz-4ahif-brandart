@@ -93,20 +93,20 @@ $(function () {
     });
 
     //Post function for my couchDB
-    async function doPost(object: any, searchUrl: string){
-        let returnData: any;
-        $.ajax({
-            type: "POST",
-            url: searchUrl,
-            contentType: "application/JSON",
-            data: JSON.stringify(object),
-            dataType: "json",
-            async: false,
-            success: await function (data) {
-                returnData = data;
-            }
+    async function doPost(object: any, searchUrl: string): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            $.ajax({
+                type: "POST",
+                url: searchUrl,
+                contentType: "application/JSON",
+                data: JSON.stringify(object),
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    resolve(data);
+                }
+            });
         });
-        return returnData;
     }
     //moving the enemybar, reacting on server
     socket.on("moveBar", function (index) {
