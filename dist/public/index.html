@@ -8,23 +8,46 @@
 </head>
 
 <body>
-    <div id="top" style="text-align: center;">
-        <svg width="200" height="50">
-            <rect width="200" height="50" style="fill: #FFFFFF" />
-        </svg>
+    <div id="login">
+        <a style="color:#FFFFFF">Username:</a>
+        <input type="text" id="username" placeholder="Mustermann"></input>
+        <button id="sendUsername">Send it</button>
     </div>
-    <div id="footer" style="text-align: center;">
-        <svg width="200" height="50">
-            <rect width="200" height="50" style="fill: #FFFFFF" />
-        </svg>
+
+    <div id="Game">
+        <div id="top" style="text-align: center;">
+            <svg id="enemyBar" width="200" height="50">
+                <rect width="200" height="50" style="fill: #FFFFFF" />
+            </svg>
+        </div>
+        <div id="footer" style="text-align: center;">
+            <svg id="myBar" width="200" height="50">
+                <rect width="200" height="50" style="fill: #FFFFFF" />
+            </svg>
+        </div>
+        <div id="ballDiv">
+            <svg id="ball" width="100" height="100">
+                <circle cx="50" cy="50" r="50" fill="white" />
+            </svg>
+        </div>
+        <button id="score">
+            <a id="firstScore">0</a>
+            <a>/</a>
+            <a id="secondScore">0</a>
+        </button>
     </div>
-    <div id="ball">
-        <svg width="100" height="100">
-            <circle cx="50" cy="50" r="50" fill="white" />
-        </svg>
+
+    <div id="scorePage">
+        <button id="closeScore">Back to the game</button>
+        <table id="tableScore">
+            <tr>
+                <th>Username</th>
+                <th>Score</th>
+            </tr>
+        </table>
     </div>
-    <button id="left">left</button>
-    <button id="right">right</button>
+    
+
 </body>
 
 </html>
