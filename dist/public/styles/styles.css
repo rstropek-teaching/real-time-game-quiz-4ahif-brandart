@@ -22,8 +22,8 @@ body {
 
 div#ballDiv{
     width: 200px;
-    left: 400px;
-    top: 400px;
+    left: 50%;
+    top: 50%;
     position: absolute;
 }
 

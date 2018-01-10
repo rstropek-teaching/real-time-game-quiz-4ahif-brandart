@@ -2,6 +2,8 @@ declare const io: SocketIOStatic;
 
 $(function () {
     let x = 0;
+    let y = 0;
+    let direction = true;
     let username: String;
     let started: boolean = false;
     $('#Game').hide();
@@ -14,6 +16,7 @@ $(function () {
         if (!$('#username').val()) {
             alert("Parameters missing!");
         } else {
+
             let selector = {
                 "selector": {
                     "name": { "$eq": <string>$('#username').val() },
@@ -22,15 +25,14 @@ $(function () {
             };
             let data = await doPost(selector, "http://127.0.0.1:5984/pong/_find");
 
-            if(data.docs[0] != undefined){
-                alert("already");
-            }else{
+            if (data.docs[0] == undefined) {
                 let newUser = {
                     "name": <string>$('#username').val(),
-                    "score": 0
+                    "score": 0,
+                    "_id": <string>$('#username').val()
                 }
                 let dataPost = doPost(newUser, "http://127.0.0.1:5984/pong/");
-                if(dataPost != undefined){
+                if (dataPost != undefined) {
                     alert("User created");
                 }
             }
@@ -53,7 +55,7 @@ $(function () {
                     x -= 30;
                     $('#myBar').attr("transform", "translate(" + x + ",0)");
                 }
-                socket.emit('moveBar', -x);
+                socket.emit('moveBar', x);
             }
             $("#score").data('score', false);
 
@@ -74,7 +76,7 @@ $(function () {
             html += `<tr><td>${resultEntry.name}</td>`
             html += `<td>${resultEntry.score}</td></tr>`
         }
-        $('#tableScore')[0].innerHTML += html;
+        $('#tableScore')[0].innerHTML = html;
     }
 
     //hide game div, show scorepage
@@ -91,14 +93,18 @@ $(function () {
         $('#scorePage').hide();
         $('#Game').show();
     });
+    
 
+    $("#ScorePoint").on("click", function (e) {
+        incrementScore();
+    });
     //Post function for my couchDB
-    async function doPost(object: any, searchUrl: string): Promise<any> {
+    function doPost(object: any, searchUrl: string): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             $.ajax({
                 type: "POST",
                 url: searchUrl,
-                contentType: "application/JSON",
+                contentType: "application/json",
                 data: JSON.stringify(object),
                 dataType: "json",
                 async: false,
@@ -108,6 +114,27 @@ $(function () {
             });
         });
     }
+    async function incrementScore() {
+        const response = await fetch("http://localhost:5984/pong/" + $('#username').val());
+        const result = await response.json();
+        var userScore: number = result.score + 1;
+        const rev = result._rev;
+        var user = {
+            "_rev": rev,
+            "score": userScore,
+            "name": result.name
+        };
+        $.ajax({
+            type: "PUT",
+            url: "http://localhost:5984/pong/" + $('#username').val(),
+            contentType: "application/json",
+            data: JSON.stringify(user),
+            dataType: "json",
+            async: false,
+            success: function (data) { }
+        });
+    }
+
     //moving the enemybar, reacting on server
     socket.on("moveBar", function (index) {
         $('#enemyBar').attr("transform", "translate(" + index + ",0)");
@@ -127,14 +154,27 @@ $(function () {
 
     //not implemented now
     socket.on("startBall", function (message) {
-        setInterval(ballMove(), 500);
+        setInterval(ballMove, 120);
     });
 
     socket.on("moveBall", function (message) {
-
+        if (!direction) {
+            y += 5;
+            $('#ball').attr("transform", "translate(0," + y + ")");
+        } else {
+            y -= 5;
+            $('#ball').attr("transform", "translate(0," + y + ")");
+        }
     });
 
     function ballMove() {
-
+        if (direction) {
+            y += 5;
+            $('#ball').attr("transform", "translate(0," + y + ")");
+        } else {
+            y -= 5;
+            $('#ball').attr("transform", "translate(0," + y + ")");
+        }
+        socket.emit("moveBall");
     }
 });
